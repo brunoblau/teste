@@ -1,0 +1,23 @@
+import statistics
+from datetime import datetime
+import pandas as pd
+from pandas_datareader import data as web
+
+dado = pd.DataFrame(columns=['Nome', 'Média', 'DevPad', 'Máximo'])
+acoes = pd.read_excel(r'C:\Users\08898736908\Desktop\Projeto Py\EmpresasAções.xlsx')
+acoes.columns = acoes.iloc[0]
+acoes = acoes.drop(0)
+num = int(acoes.count())
+str_date = '01/03/2020'
+inicio = datetime.strptime(str_date, '%d/%m/%Y').date()
+end_date = '03/12/2021'
+fim = datetime.strptime(end_date, '%d/%m/%Y').date()
+
+for n in range(1, num, 1):
+    df = web.DataReader(acoes['ticker'][n], data_source='yahoo', start=inicio, end=fim)
+    media = df['Adj Close'].mean()
+    devpad = statistics.stdev(df["Adj Close"])
+    maximo = df['Adj Close'].max()
+    dado.loc[n] = [acoes['ticker'][n], media, devpad, maximo]
+
+print(dado)
